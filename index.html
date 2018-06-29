@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas benchmark test</title>
+    <script src='./dist/benchmark.js'></script>
+    <script id="vertex" type="x-shader">
+        attribute vec2 aVertexPosition;
+
+        void main() {
+            gl_Position = vec4(aVertexPosition, 0.0, 1.0);
+        }
+    </script>
+
+    <script id="fragment" type="x-shader">
+        #ifdef GL_ES
+        precision highp float;
+        #endif
+
+        uniform vec4 uColor;
+
+        void main() {
+            gl_FragColor = uColor;
+        }
+    </script>
+    <style type="text/css">
+        body {
+            background-color: #0e0e0e;
+        }
+        .status {
+            position: absolute;
+            left: 49%;
+            top: 49%;
+            color: #d45a09;
+            font-size: 2em;
+            font-family: "Roboto", sans-serif;
+            text-align: center;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+    <span class="status">Loading...</span>
+    <script>
+        (function(){
+            var benchmark = new window.CanvasBenchmark();
+
+            var stat = document.body.querySelector('.status');
+
+            benchmark.once('ready', function() {
+
+                stat.innerHTML = "Running benchmark...";
+
+                benchmark.test();
+            });
+            benchmark.once('result', function(result) {
+
+                var interpr = 'Score: ' + Math.round(result * 1000) + '<br>';
+                if (result < 0.2) {
+                    interpr += ' &#9733; &#9734; &#9734; &#9734; &#9734;';
+                } else if (result < 0.4) {
+                    interpr += ' &#9733; &#9733; &#9734; &#9734; &#9734;';
+                } else if (result < 0.6) {
+                    interpr += ' &#9733; &#9733; &#9733; &#9734; &#9734;';
+                } else if (result < 0.8) {
+                    interpr += ' &#9733; &#9733; &#9733; &#9733; &#9734;';
+                } else {
+                    interpr += ' &#9733; &#9733; &#9733; &#9733; &#9733;';
+                }
+                stat.innerHTML = interpr;
+                console.log(interpr)
+            });
+        }());
+    </script>
+</body>
+</html>

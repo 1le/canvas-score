@@ -1,0 +1,1 @@
+window.CanvasBenchmark = require('./src/CanvasBenchmark');
