@@ -1,6 +1,7 @@
 const EventEmitter = require('eventemitter3');
 const Renderable3D = require('./../renderable/Renderable3D');
 
+// TODO literals not compatible with IE
 const vertex = `
     attribute vec2 aVertexPosition;
 
@@ -75,15 +76,19 @@ class ThreeDTest extends EventEmitter {
 
         this.shaderProgram.uColor = this._gl.getUniformLocation(this.shaderProgram, "uColor");
         this._gl.uniform4fv(this.shaderProgram.uColor, [0.0, 0.0, 0.0, 0.0]);
+
+        this._renderBound = this._render.bind(this);
     }
 
     run(runTime) {
-        console.log("RUN TEST");
-
         this.totalTimeLapsed = 0;
         this._lastFrameTime = Date.now();
         this._runTime = runTime;
-        window.requestAnimationFrame(() => { this._render();});
+        window.requestAnimationFrame(this._renderBound);
+    }
+
+    stop() {
+        this._runTime = -1;
     }
 
     _clear() {
@@ -101,18 +106,16 @@ class ThreeDTest extends EventEmitter {
         });
         this._frames++;
 
-
         let curTime = Date.now();
         this._deltaFrameTime = curTime - this._lastFrameTime;
         this._lastFrameTime = curTime;
         this.totalTimeLapsed += this._deltaFrameTime;
 
-        if (this.totalTimeLapsed < this._runTime * 1000) window.requestAnimationFrame(() => { this._render();});
+        if (this._runTime === 0 || this.totalTimeLapsed < this._runTime * 1000) window.requestAnimationFrame(this._renderBound);
         else this._finished();
     }
 
     _finished() {
-        console.log("TEST COMPLETED");
         this.emit('runCompleted', this._frames);
     }
 }

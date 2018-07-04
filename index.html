@@ -30,9 +30,9 @@
 
             var stat = document.body.querySelector('.status');
 
-            stat.innerHTML = "Running benchmark...";
+            stat.innerHTML = "Running benchmark..."; // TODO rotating loader
 
-            benchmark.test();
+            benchmark.start(0);
 
             benchmark.once(CanvasBenchmark.EVENTS.FINISH, function(result) {
 
@@ -49,8 +49,12 @@
                     interpr += ' &#9733; &#9733; &#9733; &#9733; &#9733;';
                 }
                 stat.innerHTML = interpr;
-                console.log(interpr)
+                console.log(interpr);
             });
+
+            setTimeout(function() {
+                benchmark.stop();
+            }, 3000);
         }());
     </script>
 </body>

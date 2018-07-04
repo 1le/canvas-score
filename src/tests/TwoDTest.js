@@ -20,7 +20,6 @@ class TwoDTest extends EventEmitter {
     }
 
     run(runTime) {
-        console.log("RUN TEST");
         this.start = Date.now();
         this._runTime = runTime;
         window.requestAnimationFrame(() => { this._render();});
@@ -37,12 +36,11 @@ class TwoDTest extends EventEmitter {
             obj.draw(this._context);
         });
         this._frames++;
-        if (Date.now() - this.start < this._runTime * 1000) window.requestAnimationFrame(() => { this._render();});
+        if (this._runTime === 0 || Date.now() - this.start < this._runTime * 1000) window.requestAnimationFrame(this._render);
         else this._finished();
     }
 
     _finished() {
-        console.log("TEST COMPLETED")
         this.emit('runCompleted', this._frames);
     }
 }

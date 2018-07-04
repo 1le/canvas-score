@@ -10,7 +10,7 @@ module.exports = function (grunt) {
                     }
                 },
                 files: {
-                    "./dist/benchmark.js": ["./main.js"]
+                    "./build/benchmark.js": ["./main.js"]
                 }
 
             }

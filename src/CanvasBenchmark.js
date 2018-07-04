@@ -35,9 +35,9 @@ class CanvasBenchmark extends EventEmitter {
         this._canvas.style.top = 0;
 
         this._deltaFrameTime = 0;
-        this._lastFrameTime = 0;
+        this._startTimestamp = 0;
 
-        this.totalTimeLapsed = 0;
+        this._totalTimeLapsed = 0;
         this.isPaused = false;
 
         if (this._isWebGLSupported()) {
@@ -58,34 +58,38 @@ class CanvasBenchmark extends EventEmitter {
 
     }
 
-    test() {
-        this._test.run(Config.duration);
+    /**
+     * @param {Number | undefined} duration
+     */
+    start(duration = Config.duration) {
+        this._startTimestamp = performance.now();
+        this._test.run(duration);
+    }
+
+    stop() {
+        this._test.stop();
     }
 
     pause() {
         if(this.isPaused) return;
         this.isPaused = true;
-
+        this._totalTimeLapsed += performance.now() - this._startTimestamp;
         this._test.isPaused = true;
 
-        console.info('# Benchmark is paused');
+        console.info('# Benchmark paused');
     }
 
     resume() {
         if(!this.isPaused) return;
         this.isPaused = false;
 
-        this._test._lastFrameTime = Date.now();
+        this._startTimestamp = performance.now();
         this._test.isPaused = false;
 
-        console.info('# Benchmark is resumed');
+        console.info('# Benchmark resumed');
     }
 
-    _injectShaders() {
-
-    }
-
-    _onPageVisibility(e) {
+    _onPageVisibility() {
         if (document.visibilityState === 'hidden') {
             this.pause();
         } else if(document.visibilityState === 'visible'){
@@ -115,10 +119,11 @@ class CanvasBenchmark extends EventEmitter {
     }
 
     _finished(frames) {
-        console.log("Accomplished", frames);
+        console.info("Frames accomplished", frames);
         document.removeEventListener('visibilitychange', this._pageVisibilityListener);
         this._canvas.parentNode.removeChild(this._canvas);
-        let maxFrames = Config.duration * 60;
+        this._totalTimeLapsed += performance.now() - this._startTimestamp;
+        let maxFrames = (this._totalTimeLapsed / 1000) * 60;
         this.emit(CanvasBenchmark.EVENTS.FINISH, frames / maxFrames);
     }
 }
