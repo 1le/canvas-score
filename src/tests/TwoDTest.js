@@ -1,5 +1,5 @@
 const EventEmitter = require('eventemitter3');
-const Renderable2D = require('./Renderable2D');
+const Renderable2D = require('./../renderable/Renderable2D');
 
 class TwoDTest extends EventEmitter {
 

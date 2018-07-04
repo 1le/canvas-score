@@ -1,17 +1,16 @@
 const EventEmitter = require('eventemitter3');
-
-const TwoDTest = require('./TwoDTest');
-const ThreeDTest = require('./ThreeDTest');
+const Config = require('./config/Config');
+const TwoDTest = require('./tests/TwoDTest');
+const ThreeDTest = require('./tests/ThreeDTest');
 
 /**
  * main
  */
 class CanvasBenchmark extends EventEmitter {
 
-    static RUN_TIME = 5; //seconds
-
-    static TwoD_PARTICLES = 1500;
-    static ThreeD_PARTICLES = 1000;
+    static EVENTS = {
+        FINISH: 'finish'
+    };
 
     _width = 0;
     _height = 0;
@@ -23,8 +22,8 @@ class CanvasBenchmark extends EventEmitter {
     constructor() {
         super();
 
-        this._width = Math.round(window.innerWidth * 0.9);
-        this._height = Math.round(window.innerHeight * 0.9);
+        this._width = Math.round(window.innerWidth * 0.99);
+        this._height = Math.round(window.innerHeight * 0.99);
 
         this._canvas = document.createElement('canvas');
         this._canvas.width = this._width;
@@ -42,11 +41,11 @@ class CanvasBenchmark extends EventEmitter {
         this.isPaused = false;
 
         if (this._isWebGLSupported()) {
-            console.info("WEB GL TEST")
-            this._test = new ThreeDTest(this._canvas, CanvasBenchmark.ThreeD_PARTICLES);
+            console.info("WEB GL TEST");
+            this._test = new ThreeDTest(this._canvas, Config.particles.threeD);
         } else {
-            console.info("2D TEST")
-            this._test = new TwoDTest(this._canvas, CanvasBenchmark.TwoD_PARTICLES);
+            console.info("2D TEST");
+            this._test = new TwoDTest(this._canvas, Config.particles.twoD);
         }
 
         document.body.appendChild(this._canvas);
@@ -57,11 +56,10 @@ class CanvasBenchmark extends EventEmitter {
 
         this._test.on('runCompleted', this._finished.bind(this));
 
-        setTimeout(() => { this.emit('ready'); }, 0);
     }
 
     test() {
-        this._test.run(CanvasBenchmark.RUN_TIME);
+        this._test.run(Config.duration);
     }
 
     pause() {
@@ -116,8 +114,8 @@ class CanvasBenchmark extends EventEmitter {
         console.log("Accomplished", frames);
         document.removeEventListener('visibilitychange', this._pageVisibilityListener);
         this._canvas.parentNode.removeChild(this._canvas);
-        let maxFrames = CanvasBenchmark.RUN_TIME * 60;
-        this.emit('result', frames / maxFrames);
+        let maxFrames = Config.duration * 60;
+        this.emit(CanvasBenchmark.EVENTS.FINISH, frames / maxFrames);
     }
 }
 

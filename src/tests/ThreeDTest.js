@@ -1,5 +1,5 @@
 const EventEmitter = require('eventemitter3');
-const Renderable3D = require('./Renderable3D');
+const Renderable3D = require('./../renderable/Renderable3D');
 
 class ThreeDTest extends EventEmitter {
 
