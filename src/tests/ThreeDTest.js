@@ -1,6 +1,26 @@
 const EventEmitter = require('eventemitter3');
 const Renderable3D = require('./../renderable/Renderable3D');
 
+const vertex = `
+    attribute vec2 aVertexPosition;
+
+    void main() {
+        gl_Position = vec4(aVertexPosition, 0.0, 1.0);
+    }
+`;
+
+const fragment = `
+    #ifdef GL_ES
+        precision highp float;
+    #endif
+
+    uniform vec4 uColor;
+
+    void main() {
+        gl_FragColor = uColor;
+    }
+`;
+
 class ThreeDTest extends EventEmitter {
 
     _objs = [];
@@ -30,15 +50,12 @@ class ThreeDTest extends EventEmitter {
         this._gl.clearColor(0, 0, 0, 0);
         this._gl.clear(this._gl.COLOR_BUFFER_BIT);
 
-        var v = document.getElementById("vertex").firstChild.nodeValue;
-        var f = document.getElementById("fragment").firstChild.nodeValue;
-
         var vs = this._gl.createShader(this._gl.VERTEX_SHADER);
-        this._gl.shaderSource(vs, v);
+        this._gl.shaderSource(vs, vertex);
         this._gl.compileShader(vs);
 
         var fs = this._gl.createShader(this._gl.FRAGMENT_SHADER);
-        this._gl.shaderSource(fs, f);
+        this._gl.shaderSource(fs, fragment);
         this._gl.compileShader(fs);
 
         this.shaderProgram = this._gl.createProgram();

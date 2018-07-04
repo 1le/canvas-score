@@ -81,6 +81,10 @@ class CanvasBenchmark extends EventEmitter {
         console.info('# Benchmark is resumed');
     }
 
+    _injectShaders() {
+
+    }
+
     _onPageVisibility(e) {
         if (document.visibilityState === 'hidden') {
             this.pause();
