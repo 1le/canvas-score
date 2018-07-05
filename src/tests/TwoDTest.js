@@ -1,5 +1,6 @@
+const Config = require('../config/Config');
 const EventEmitter = require('eventemitter3');
-const Renderable2D = require('./../renderable/Renderable2D');
+const Renderable2D = require('../renderable/Renderable2D');
 
 class TwoDTest extends EventEmitter {
 
@@ -17,8 +18,11 @@ class TwoDTest extends EventEmitter {
         this.canvas = canvas;
         for (let i = 0; i < particleCount; i++) this._objs.push(new Renderable2D(canvas.width, canvas.height));
         this._context = canvas.getContext("2d");
-        this._context.fillStyle = "rgba(0, 0.3, 0.3, 0.5)";
-
+        if (Config.debug) {
+            this._context.fillStyle = "rgba(0, 0.3, 0.3, 0.5)";
+        } else {
+            this._context.fillStyle = "rgba(0, 0, 0, 0)";
+        }
         this._renderBound = this._render.bind(this);
     }
 

@@ -1,7 +1,7 @@
 module.exports = {
 
-    // visualise test
-    debug: true,
+    // visualise tests
+    debug: false,
 
     // seconds, 0 for unlimited i.e. test stop has to be called
     duration: 5,

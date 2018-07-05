@@ -1,5 +1,6 @@
+const Config = require('../config/Config');
 const EventEmitter = require('eventemitter3');
-const Renderable3D = require('./../renderable/Renderable3D');
+const Renderable3D = require('../renderable/Renderable3D');
 
 // TODO literals not compatible with IE
 const vertex = `
@@ -68,7 +69,11 @@ class ThreeDTest extends EventEmitter {
         this._gl.useProgram(this.shaderProgram);
 
         this.shaderProgram.uColor = this._gl.getUniformLocation(this.shaderProgram, "uColor");
-        this._gl.uniform4fv(this.shaderProgram.uColor, [0.0, 0.0, 0.0, 0.0]);
+        if (Config.debug) {
+            this._gl.uniform4fv(this.shaderProgram.uColor, [0.0, 0.3, 0.3, 0.5]);
+        } else {
+            this._gl.uniform4fv(this.shaderProgram.uColor, [0.0, 0.0, 0.0, 0.0]);
+        }
 
         this._renderBound = this._render.bind(this);
     }
