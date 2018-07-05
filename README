@@ -1,7 +1,0 @@
-A tool for benchmarking the performance of simple canvas draw operations.
-Should run in the background (no visible draws to the user) and complete within few seconds.
-
-Building
-Run:
-> npm i
-> grunt build
