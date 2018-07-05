@@ -6,10 +6,11 @@ class TwoDTest extends EventEmitter {
     _objs = [];
     _context = null;
 
-    canvas = null;;
+    canvas = null;
 
     _frames = 0;
-    _runTime = 0;
+
+    _paused = false;
 
     constructor(canvas, particleCount) {
         super();
@@ -17,12 +18,21 @@ class TwoDTest extends EventEmitter {
         for (let i = 0; i < particleCount; i++) this._objs.push(new Renderable2D(canvas.width, canvas.height));
         this._context = canvas.getContext("2d");
         this._context.fillStyle = "rgba(0, 0.3, 0.3, 0.5)";
+
+        this._renderBound = this._render.bind(this);
     }
 
-    run(runTime) {
-        this.start = Date.now();
-        this._runTime = runTime;
-        window.requestAnimationFrame(() => { this._render();});
+    run() {
+        window.requestAnimationFrame(this._renderBound);
+    }
+
+    pause() {
+        this._paused = true;
+    }
+
+    stop() {
+        this._paused = true;
+        this._finish();
     }
 
     _clear() {
@@ -30,17 +40,19 @@ class TwoDTest extends EventEmitter {
     }
 
     _render() {
+        if(this._paused) return;
+
         this._clear();
         this._objs.forEach((obj) => {
             obj.move(this.canvas.width, this.canvas.height);
             obj.draw(this._context);
         });
         this._frames++;
-        if (this._runTime === 0 || Date.now() - this.start < this._runTime * 1000) window.requestAnimationFrame(this._render);
-        else this._finished();
+
+        window.requestAnimationFrame(this._renderBound);
     }
 
-    _finished() {
+    _finish() {
         this.emit('runCompleted', this._frames);
     }
 }

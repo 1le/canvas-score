@@ -27,18 +27,11 @@ class ThreeDTest extends EventEmitter {
     _objs = [];
     _gl = null;
     _frames = 0;
-    _runTime = 0;
-    _deltaFrameTime = 0;
-    _lastFrameTime = 0;
-    
+
+    _paused = false;
+
     canvas = null;
     shaderProgram = null;
-    totalTimeLapsed = 0;
-    isPaused = false;
-
-    numItems = 0;
-    itemSize;
-    vertices;
 
     constructor(canvas, particleCount) {
         super();
@@ -80,15 +73,17 @@ class ThreeDTest extends EventEmitter {
         this._renderBound = this._render.bind(this);
     }
 
-    run(runTime) {
-        this.totalTimeLapsed = 0;
-        this._lastFrameTime = Date.now();
-        this._runTime = runTime;
+    run() {
         window.requestAnimationFrame(this._renderBound);
     }
 
+    pause() {
+        this._paused = true;
+    }
+
     stop() {
-        this._runTime = -1;
+        this._paused = true;
+        this._finish();
     }
 
     _clear() {
@@ -97,7 +92,7 @@ class ThreeDTest extends EventEmitter {
     }
 
     _render() {
-        if(this.isPaused) return;
+        if(this._paused) return;
 
         this._clear();
         this._objs.forEach((obj) => {
@@ -106,16 +101,10 @@ class ThreeDTest extends EventEmitter {
         });
         this._frames++;
 
-        let curTime = Date.now();
-        this._deltaFrameTime = curTime - this._lastFrameTime;
-        this._lastFrameTime = curTime;
-        this.totalTimeLapsed += this._deltaFrameTime;
-
-        if (this._runTime === 0 || this.totalTimeLapsed < this._runTime * 1000) window.requestAnimationFrame(this._renderBound);
-        else this._finished();
+        window.requestAnimationFrame(this._renderBound);
     }
 
-    _finished() {
+    _finish() {
         this.emit('runCompleted', this._frames);
     }
 }

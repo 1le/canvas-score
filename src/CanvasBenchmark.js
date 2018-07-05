@@ -74,7 +74,7 @@ class CanvasBenchmark extends EventEmitter {
         if(this.isPaused) return;
         this.isPaused = true;
         this._totalTimeLapsed += performance.now() - this._startTimestamp;
-        this._test.isPaused = true;
+        this._test.pause();
 
         console.info('# Benchmark paused');
     }
@@ -84,7 +84,7 @@ class CanvasBenchmark extends EventEmitter {
         this.isPaused = false;
 
         this._startTimestamp = performance.now();
-        this._test.isPaused = false;
+        this._test.run();
 
         console.info('# Benchmark resumed');
     }
