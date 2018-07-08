@@ -21,4 +21,5 @@ grunt
 ### Usage
 See index.html
 
-TODO - demo link
+### Preview
+https://codepen.io/ilianka/pen/BVXMZX
